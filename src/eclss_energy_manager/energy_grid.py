@@ -73,6 +73,8 @@ class EnergyGrid:
         
         return {
             "ls": ls,
+            "generation": total_gen,
+            "demand": total_demand,
             "crew_health": self.crew_health,
             "o2_reserve": self.habitat_o2,
             "h2o_reserve": self.habitat_h2o,

@@ -20,4 +20,4 @@ class CrewMetabolism:
             health -= (0.9 - o2_available_pct) * 2
         if h2o_available_pct < 0.8:
             health -= (0.8 - h2o_available_pct) * 0.5
-        return max(0, health)
+        return max(0.0, float(health))

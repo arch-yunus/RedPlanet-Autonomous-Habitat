@@ -72,3 +72,20 @@ def simulate_advanced_construction(num_rovers=20):
             r.step(neighbors=neighbors)
             
     return rovers, habitat
+
+def visualize_habitat(habitat):
+    plt.figure(figsize=(8, 6))
+    top_view = np.sum(habitat.grid, axis=2)
+    plt.imshow(top_view, cmap='Oranges')
+    plt.colorbar(label='Wall Height (Voxels)')
+    plt.title("Mars Habitat Construction - 3D Print Progress (Top View)")
+    plt.xlabel("X (Grid Units)")
+    plt.ylabel("Y (Grid Units)")
+    plt.savefig("habitat_progress.png")
+    print("?? Construction progress saved as habitat_progress.png")
+
+if __name__ == "__main__":
+    print("?? Starting Advanced Swarm Construction...")
+    rovers, habitat = simulate_advanced_construction()
+    print(f"?? Construction Progress: {habitat.get_progress():.4f}%")
+    visualize_habitat(habitat)
