@@ -50,6 +50,7 @@ def calculate_full_isru_cycle(co2_mass_kg, water_mass_kg):
         "water_recovered_kg": round(h2o_recovered_kg, 3),
         "oxygen_stored_kg": round(o2_to_liquefy_kg, 3),
         "total_energy_kwh": round(total_energy_kwh, 2),
+        "electrolysis": electrolysis_res,
         "energy_breakdown": {
             "electrolysis": electrolysis_res['energy_consumed_kwh'],
             "compression": energy_comp,
