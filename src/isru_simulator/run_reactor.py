@@ -2,12 +2,16 @@ import argparse
 from constants import *
 from electrolysis import calculate_electrolysis
 from liquefaction import calculate_liquefaction
+from compressor import calculate_compression_work
+from heat_exchanger import calculate_heat_recovery
 
 def calculate_full_isru_cycle(co2_mass_kg, water_mass_kg):
     """
     1. Electrolysis: 2H2O -> 2H2 + O2
     2. Sabatier: CO2 + 4H2 -> CH4 + 2H2O
-    3. Liquefaction: Cool results to storage temps
+    3. Compression: CO2 and result gases
+    4. Heat Recovery: Reaction heat for pre-heating
+    5. Liquefaction: Cool results
     """
     
     # --- Phase 1: Electrolysis ---
@@ -17,25 +21,28 @@ def calculate_full_isru_cycle(co2_mass_kg, water_mass_kg):
     
     # --- Phase 2: Sabatier Reactor ---
     moles_co2 = (co2_mass_kg * 1000) / MOLAR_MASS_CO2
-    moles_h2_needed = moles_co2 * 4
     moles_h2_available = (h2_available_kg * 1000) / MOLAR_MASS_H2
-    
     actual_moles_co2_reacted = min(moles_co2, moles_h2_available / 4)
     
-    moles_ch4_produced = actual_moles_co2_reacted * SABATIER_EFFICIENCY
-    moles_h2o_produced = actual_moles_co2_reacted * 2 * SABATIER_EFFICIENCY
+    ch4_kg = (actual_moles_co2_reacted * SABATIER_EFFICIENCY * MOLAR_MASS_CH4) / 1000
+    h2o_recovered_kg = (actual_moles_co2_reacted * 2 * SABATIER_EFFICIENCY * MOLAR_MASS_H2O) / 1000
     
-    ch4_kg = (moles_ch4_produced * MOLAR_MASS_CH4) / 1000
-    h2o_recovered_kg = (moles_h2o_produced * MOLAR_MASS_H2O) / 1000
+    # --- Phase 3: Advanced Engineering (v3) ---
+    # Compression Work (ATM: 6 hPa -> Storage: 1000 hPa)
+    energy_comp = calculate_compression_work(co2_mass_kg, ATM_PRESSURE_MARS, 1000)
+    # Heat Recovery
+    energy_saved_heat = calculate_heat_recovery(actual_moles_co2_reacted, water_mass_kg)
     
-    # --- Phase 3: Liquefaction ---
+    # --- Phase 4: Liquefaction ---
     energy_methane = calculate_liquefaction("CH4", ch4_kg)
     energy_oxygen = calculate_liquefaction("O2", o2_to_liquefy_kg)
     
     total_energy_kwh = (
         electrolysis_res['energy_consumed_kwh'] + 
+        energy_comp +
         energy_methane + 
-        energy_oxygen
+        energy_oxygen - 
+        energy_saved_heat
     )
     
     return {
@@ -43,7 +50,12 @@ def calculate_full_isru_cycle(co2_mass_kg, water_mass_kg):
         "water_recovered_kg": round(h2o_recovered_kg, 3),
         "oxygen_stored_kg": round(o2_to_liquefy_kg, 3),
         "total_energy_kwh": round(total_energy_kwh, 2),
-        "electrolysis": electrolysis_res
+        "energy_breakdown": {
+            "electrolysis": electrolysis_res['energy_consumed_kwh'],
+            "compression": energy_comp,
+            "liquefaction": energy_methane + energy_oxygen,
+            "recovered_heat": energy_saved_heat
+        }
     }
 
 def main():

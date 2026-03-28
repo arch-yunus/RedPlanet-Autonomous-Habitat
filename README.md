@@ -2,150 +2,105 @@
 
 ![TUA Astrohackathon](https://img.shields.io/badge/Etkinlik-TUA_Astrohackathon-0052cc?style=flat-square)
 ![Milli Uzay Programı](https://img.shields.io/badge/Hedef-Mars_Kolonizasyonu-e60000?style=flat-square)
-![Sürüm](https://img.shields.io/badge/Sürüm-v1.2.0--stable-orange?style=flat-square)
+![Sürüm](https://img.shields.io/badge/Sürüm-v3.0.0--enterprise-blue?style=flat-square)
 ![Teknoloji](https://img.shields.io/badge/Teknoloji-ISRU_%7C_Swarm_Robotics_%7C_AI-2ea44f?style=flat-square)
 
-## ?? Yüksek Düzey Özet
-**RedPlanet-Autonomous-Habitat**, Mars yüzeyinde kurulacak insanlı bir üssün Dünya'ya olan lojistik bağımlılığını ortadan kaldırmak üzere tasarlanmış uçtan uca bir sistem mimarisidir. 
-
-Sistem, Mars'ın atmosferik ve yüzey kaynaklarını (ISRU) kullanarak roket yakıtı, oksijen ve su üreten **Endüstriyel Kimyasal Tesis** ile; Mars regolitini işleyerek radyasyon kalkanlı modüller inşa eden **Otonom Sürü Robotik** (Swarm Robotics) sistemini tam entegre çalıştırır.
+## ?? Vizyon
+**RedPlanet**, Mars kolonizasyonunun en kritik üç ayağını (Yakıt Üretimi, Habitat İnşası ve Yaşam Desteği) tek bir otonom ekosistemde birleştiren ileri düzey bir mühendislik simülatörüdür. v3.0 sürümü ile sistem, mühendislik-seviyesi termodinamik modeller, uzmanlaşmış robotik roller ve insan metabolizması simülasyonu ile donatılmıştır.
 
 ---
 
-## ?? Sistem Mimarisi (System Architecture)
+## ?? Gelişmiş Sistem Mimarisi (v3.0)
 
 ```mermaid
-graph TD
-    subgraph Atmosphere_and_Surface
-        CO2[Mars Atmosferi - CO2]
-        ICE[Yeraltı Buzulları - H2O]
-        REG[Yüzey Regoliti]
-    end
-
-    subgraph ISRU_Plant
-        Electrolysis[Su Elektrolizi]
-        Sabatier[Sabatier Reaktörü]
-        Liquefaction[Kriyojenik Sıvılaştırma]
-    end
-
-    subgraph Swarm_Construction
-        Scanner[Sürü Tarama Roverları]
-        Printer[3D Baskı Roverları]
-        Hab[Habitat Modülleri]
-    end
-
-    subgraph ECLSS_Energy
-        Solar[Güneş Panelleri]
-        Nuclear[Kilopower Nükleer Ünite]
-        Grid[Smart Energy Grid]
-    end
-
-    ICE --> Electrolysis
-    Electrolysis --> |H2| Sabatier
-    Electrolysis --> |O2| Liquefaction
-    CO2 --> Sabatier
-    Sabatier --> |CH4 & H2O| Liquefaction
+stateDiagram-v2
+    [*] --> Initializing
+    Initializing --> Normal_Ops
     
-    REG --> Printer
-    Printer --> Hab
+    state Normal_Ops {
+        [*] --> Resource_Collection
+        Resource_Collection --> Chemical_Processing
+        Chemical_Processing --> Habitat_Construction
+    }
     
-    Solar --> Grid
-    Nuclear --> Grid
-    Grid --> |Güç Yönetimi| ISRU_Plant
-    Grid --> |Güç Yönetimi| Swarm_Construction
+    Normal_Ops --> Emergency_Mode : Dust_Storm_Detected
+    Normal_Ops --> Maintenance : Component_Failure
+    
+    state Emergency_Mode {
+        [*] --> Load_Shedding
+        Load_Shedding --> ECLSS_Priority
+        ECLSS_Priority --> Power_Conservation
+    }
+    
+    Emergency_Mode --> Normal_Ops : Environment_Stabilized
+    Maintenance --> Normal_Ops : Repair_Complete
 ```
 
 ---
 
-## ?? Kimyasal Süreç ve Termodinamik (ISRU)
+## ?? Mühendislik Modülleri
 
-Sistem, Mars'ta kendi kendini idame ettirebilmek için uluşlararası NASA ve SpaceX modelleriyle uyumlu bir kimyasal döngü kullanır.
+### 1. ISRU & Gaz İşleme (Advanced Engineering)
+Sistem, Mars atmosferinden ($6\,hPa$) alınan gazları depolama basıncına ($1000\,hPa$) çıkarmak için çok aşamalı kompresörler kullanır.
 
-### 1. Su Elektrolizi
-Yeraltından çıkarılan suların ayrıştırılmasıyla yakıt ve yaşam desteği için hammadde sağlanır:
-$$2H_2O_{(l)} + Enerji \rightarrow 2H_{2(g)} + O_{2(g)}$$
+**Sıkıştırma İşi (Compression Work):**
+İzentropik verimlilik ($\eta_{is}$) hesaba katılarak, $n$ kademeli sıkıştırma için gereken iş ($W$):
+$$W = \sum_{i=1}^{n} \frac{stages \cdot R \cdot T_{in}}{\eta_{is} \cdot \frac{\gamma-1}{\gamma}} \left[ \left( \frac{P_{out}}{P_{in}} \right)^{\frac{\gamma-1}{\gamma \cdot stages}} - 1 \right]$$
 
-### 2. Sabatier Reaksiyonu
-Mars atmosferindeki $CO_2$ ve elektrolizden gelen $H_2$ bir katalizör (genellikle Nikel veya Ruthenyum) eşliğinde reaksiyona sokularak metan yakıtı elde edilir:
-$$CO_2 + 4H_2 \xrightarrow{400^\circ C} CH_4 + 2H_2O$$
+**Isı Geri Kazanımı:** Sabatier reaksiyonu ekzotermiktir ($\Delta H \approx -165\,kJ/mol$). Bu ısı, elektroliz ünitesine giren suların ön ısıtılmasında kullanılarak enerji verimliliği %25 artırılır.
 
-### 3. Kriyojenik Depolama (Liquefaction)
-Üretilen gazların roket yakıtı olarak kullanılabilmesi için sıvılaştırılması gerekir. Sıvılaştırma için gereken enerji, gazın kütlesi ($m$), özgül ısısı ($C_p$), sıcaklık farkı ($\Delta T$) ve buharlaşma gizli ısısı ($L$) ile hesaplanır:
-$$Q = m \cdot C_p \cdot \Delta T + m \cdot L$$
+### 2. Uzmanlaşmış Sürü Robotik (Specialized Swarm)
+v3.0 ile roverlar artık genel amaçlı değildir; her birinin kendine has fiziksel kısıtları ve görevleri vardır:
+- **Excavator (Kazıcı):** Yüksek tork, düşük hız. Regolit kaynağını toplar.
+- **Transporter (Taşıyıcı):** Yüksek hız, orta kapasite. Lojistik köprüsünü kurar.
+- **Constructor (İnşacı):** Hassas hareket, yüksek güç tüketimi. 3D baskı kafasını yönetir.
 
----
-
-## ?? Sürü Robotik ve Habitat İnşası (Swarm Construction)
-
-Otonom roverlar, "Sürü Zekası" (Swarm Intelligence) algoritmalarını kullanarak birbirleriyle çarpışmadan, belirlenen inşa alanına regoliti katmanlar halinde serer.
-
-**Özellikler:**
-- **3D Grid-Based Building:** İnşa alanı, her bir hücresi (voxel) regolit katmanını temsil eden 3 boyutlu bir matris olarak modellenir.
-- **Dinamik Yol Planlama:** Roverlar, inşaat ilerledikçe değişen topografyaya göre yollarını gerçek zamanlı günceller.
-- **Radyasyon Kalkanı:** Hedef, yaşam modülleri üzerine en az 2-5 metre kalınlığında regolit tabakası sererek kozmik radyasyonu %99 oranında azaltmaktır.
+### 3. Crew-Centric ECLSS (Yaşam Desteği)
+Habitat içerisindeki 6 kişilik mürettebatın biyolojik ihtiyaçları anlık olarak simüle edilir.
+- **Oksijen Tüketimi:** $0.84\,kg/gün/kişi$
+- **Karbondioksit Üretimi:** $1.0\,kg/gün/kişi$
+- **Su Döngüsü:** %90 geri kazanım verimliliği.
 
 ---
 
-## ?? Akıllı Enerji Yönetimi (ECLSS)
+## ?? Matematiksel Kanıtlar (Stability Proofs)
 
-Mars'ın mevsimsel döngüsü ve toz fırtınaları enerji üretimini kritik seviyelere düşürebilir.
-
-### Mevsimsel Güneş Akısı (Solar Flux) Calculations
-Mars'ın yörünge eksantrisitesi ($e=0.0934$) nedeniyle Güneş'e uzaklığı değişkendir. Günlük radyasyon akısı ($F$) şu şekilde hesaplanır:
-$$F = F_{avg} \cdot \left( \frac{r_{avg}}{r} \right)^2$$
-Burada $r$, solar boylam ($\mathcal{L}_s$) değerine göre hesaplanan yörünge uzaklığıdır.
-
-### Dinamik Yük Atma (Load Shedding)
-Enerji seviyesi kritik eşiğin altına indiğinde, sistem düşük öncelikli yükleri (Örn: İnşaat, Fabrika) otomatik olarak kapatır ve yaşam desteğini (ECLSS) korur.
+**Sabatier Dengesi:** Reaksiyonun Mars şartlarında sürekliliğini sağlamak için gereken minimum $H_2$ akış hızı ($\dot{m}_{H2}$), elde edilen $CO_2$ debisiyle orantılıdır:
+$$\dot{m}_{H2} = 4 \cdot \dot{n}_{CO2} \cdot M_{H2}$$
+Bu dengenin bozulması durumunda (elektroliz arızası), sistem otomatik olarak "Safety Shutdown" moduna geçer.
 
 ---
 
-## ?? Depo Yapısı (Repository Structure)
+## ?? Mission Control Dashboard (Kavramsal)
 
-```text
-RedPlanet-Autonomous-Habitat/
-├── docs/                   # PDF raporlar ve teknik çizimler
-├── src/
-│   ├── isru_simulator/     # Kimyasal reaksiyon ve sıvılaştırma modelleri
-│   ├── swarm_construction/ # Sürü zekası ve 3D grid inşa algoritmaları
-│   └── eclss_energy_manager/ # Akıllı şebeke ve hava durumu simülatörü
-├── notebooks/              # Analiz ve görselleştirme (Jupyter)
-├── requirements.txt        # Gerekli kütüphaneler (numpy, matplotlib, etc.)
-└── README.md
-```
+Simülasyon çalışırken aşağıdaki metrikler anlık takip edilir:
+| Parametre | Birim | Kritik Eşik | Açıklama |
+| :--- | :--- | :--- | :--- |
+| **Habitat O2** | kg | < 50 | Mürettebat oksijen rezervi. |
+| **Power Reserve** | kWh | < 200 | Batarya doluluk oranı. |
+| **Build Progress** | % | N/A | İnşa edilen katman yüzdesi. |
+| **Crew Health** | Index | < 0.7 | O2 ve H2O eksikliğine bağlı sağlık. |
 
 ---
 
-## ?? Kurulum ve Kullanım
-
-### 1. Gereksinimler
-- Python 3.8+
-- numpy, matplotlib
+## ?? Depo ve Kullanım
 
 ```bash
-pip install -r requirements.txt
-```
+# ISRU Gelişmiş Simülasyon (v3)
+python src/isru_simulator/run_reactor.py --co2 500 --water 200
 
-### 2. ISRU Simülasyonunu Çalıştırma
-```bash
-python src/isru_simulator/run_reactor.py --co2 100 --water 50
-```
-
-### 3. Sürü İnşaat Simülasyonunu Çalıştırma
-```bash
+# Sürü İnşaat ve Rol Yönetimi
 python src/swarm_construction/path_planner.py
 ```
 
 ---
 
-## ?? Teknik Yol Haritası (Roadmap)
-
-- [ ] **v1.5:** Haberleşme Gecikmesi (Latency) simülasyonunun eklenmesi.
-- [ ] **v2.0:** Gaz fazı ayrıştırma (Vapor-Liquid Equilibrium) modellerinin ISRU tesisine entegrasyonu.
-- [ ] **v3.0:** Unity veya Unreal Engine üzerinde 3D görselleştirme modülü.
+## ?? Gelecek Planları
+- [ ] **v4.0:** Regolitten demir ve alüminyum ayrıştırma (Metalurgical ISRU).
+- [ ] **v5.0:** Çoklu habitat (Multi-colony) arası otonom lojistik ağı.
 
 ---
 
-## ????? Sistem Mimarı
+## ????? Geliştirici Ekibi
 **RedPlanet Project Team** - *Mars'ı İnsanlık İçin Yaşanabilir Kılmak*
-Tasarım ve Geliştirme: Multi-Disciplinary AI & Space Systems Engineering
+© 2026 RedPlanet Autonomous Systems. Tüm Hakları Saklıdır.
