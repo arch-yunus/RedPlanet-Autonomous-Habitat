@@ -1,6 +1,11 @@
 import random
 from weather_models import get_solar_flux, simulate_ls_cycle
 from human_metabolism import CrewMetabolism
+from greenhouse import HydroponicGreenhouse
+from psychology import CrewPsychology
+from radiation_model import RadiationModel
+from health_ai import HealthAIPredictor
+from quantum_governor import QuantumGovernor
 
 class EnergyGrid:
     def __init__(self, solar_capacity_coeff=0.2, nuclear_capacity=60, crew_size=6):
@@ -12,6 +17,12 @@ class EnergyGrid:
         self.days_elapsed = 0
         
         self.crew = CrewMetabolism(crew_size)
+        self.greenhouse = HydroponicGreenhouse(50)
+        self.psychology = CrewPsychology(crew_size)
+        self.radiation = RadiationModel()
+        self.health_ai = HealthAIPredictor(self.crew)
+        self.governor = QuantumGovernor(self)
+        
         self.habitat_o2 = 500  # kg reserve
         self.habitat_h2o = 2000 # kg reserve
         self.crew_health = 1.0
