@@ -1,90 +1,67 @@
-# ?? RedPlanet: Interplanetary Sovereign & Global Habitat Simulation
+# ?? RedPlanet: Terraforming Genesis & Planetary Resilience Blueprint
 
 ![RedPlanet Banner](redplanet_banner.png)
 
-![Sürüm](https://img.shields.io/badge/Sürüm-v6.0.0--sovereign-gold?style=for-the-badge)
-![Otonomi](https://img.shields.io/badge/Otonomi_Seviyesi-Interplanetary_Sovereign-blue?style=for-the-badge)
-![TRL](https://img.shields.io/badge/TRL-9_Sovereign_System-red?style=for-the-badge)
+![Sürüm](https://img.shields.io/badge/Sürüm-v7.0.0--genesis-green?style=for-the-badge)
+![Otonomi](https://img.shields.io/badge/Otonomi_Seviyesi-Terraforming_Genesis-blue?style=for-the-badge)
+![Hedef](https://img.shields.io/badge/Hedef-Mavi_Mars-white?style=for-the-badge)
 
-## ?? Vizyon 
-**RedPlanet v6.0**, Mars'ı sadece yaşanabilir kılmakla kalmayıp, onu Güneş Sistemi'nin yeni bir lojistik ve endüstriyel merkezi haline getiren nihai simülasyon protokolüdür. Bu sürüm; yörünge yakıt depoları, mega yapı inşası (Swarm Fusion) ve kuantum kaynak yönetimi (AI Governor) ile donatılmış bir "Gezegensel Egemenlik" (Planetary Sovereignty) modelidir.
+## ?? Terraforming Genesis Vizyonu
+**RedPlanet v7.0**, Mars'ı sadece otonom bir kamp yapmak yerine; onu yaşayan, nefes alan ve yeşil bir dünyaya dönüştürmenin mühendislik manifestosudur. Bu sürümle birlikte simülatör; Gezegensel Isınma, Mega-İnşaat Hub'ları ve Küresel Biosfer Takibi (Centennial Tracking) yeteneklerine kavuşmuştur.
 
 ---
 
-## ?? Interplanetary Operasyon Mimarisi
+## ?? Terraforming Operasyon Modülleri (v7.0)
+
+### 1. Atmosferik Isınma (Greenhouse Induction)
+ISRU tesisleri artık sadece yakıt değil, sera etkisi yaratacak **PFC (Perfluorocarbon)** gazları üretmek için optimize edilmiştir.
+- **Isınma Katsayısı:** 1 kg PFC, ısı tutma kapasitesi bakımından 10.000 kg CO2'ye eşdeğerdir.
+- **Model:** $\Delta T = \lambda \cdot \Delta F$ (Radiative forcing forcing $\Delta F \sim 0.25 \, W/m^2$ per GT).
+
+### 2. Gezegensel İnşa Hub'ları (Construction Hubs)
+Gezegensel projeler (Solar Mirror, Orbital Heater) için binlerce rover'ı koordine eden lojistik merkezler.
+- **Hub Sinerjisi:** 5 km yarıçapındaki tüm roverlar için %5 verimlilik artışı ve otonom şarj imkanı.
+
+### 3. Yüzyıllık Biyosfer Takibi (Centennial Tracker)
+Simülatör, bir asır boyunca sürecek olan ısınma, basınç artışı ve "Habitability" endeksini takip eder.
+- **Biyosfer Hedefi:** $T > 273K$ ve $P > 600hPa$ (Açık hava tarımı başlangıcı).
+
+---
+
+## ?? Terraforming Blueprint (1000 Yıllık Yol Haritası)
 
 ```mermaid
-graph TD
-    subgraph Orbital_Sovereignty
-        Depot[Orbital Refueling Depot - L1/L2]
-        Relay[Quantum Relay Satellite Network]
-        Spacecraft[Interplanetary Transport Ships]
-    end
-
-    subgraph Planetary_Deep_ISRU
-        N2[Nitrogen Fixation]
-        Metal[Metallurgical MSE]
-        Fuel[Sabatier Propellant]
-    end
-
-    subgraph Mega_Construction
-        Fusion[Swarm Fusion Protocol]
-        Shield[Global Solar Shield Project]
-        Dome[Pressurized Mega-Domes]
-    end
-
-    subgraph Quantum_Governance
-        Gov[Quantum AI Governor]
-        ECLSS[Regenerative Life Support]
-        Health[Health AI Informatics]
-    end
-
-    Planetary_Deep_ISRU --> |Fuel & O2| Depot
-    Depot --> |Refueling| Spacecraft
-    Fusion --> |Mega-Infrastructure| Shield
-    Gov --> |Real-time Optimization| ECLSS
-    Gov --> |Priority Management| Fusion
+gantt
+    title Mars Terraforming 1000 Yıllık Projeksiyon (v7.0)
+    dateFormat  YYYY
+    section Genesis Fazı
+    Atmosferik Isınma (PFC Release) :active, 2026, 2126
+    Kutup Buzullarının Süblimasyonu : 2050, 2150
+    section Biyolojik Faz
+    Liken ve Alg Kolonizasyonu    : 2150, 2250
+    İlk Orman Yapıları (Greenhouses) : 2200, 2300
+    section Stabilizasyon
+    Oksijen Zengini Atmosfer      : 2400, 2800
+    Mavi Mars (Okyanus Oluşumu)   : 2500, 3000
 ```
 
 ---
 
-## ?? İleri Düzey Teknoloji Spesifikasyonları (v6.0)
+## ?? Teknik Mühendislik API Referansı
 
-### 1. Yörünge Lojistiği (Orbital Propellant Depots)
-Üretilen $CH_4$ ve $O_2$, Mars yörüngesindeki yakıt istasyonlarına aktarılır. Simülasyon, Delta-V gereksinimlerini ve kırılangaz ("boil-off") kayıplarını hesaplar.
-- **Boil-off Modeli:** $\Delta m = m_{init} \cdot e^{-\lambda t}$
+### `isru_simulator.atmospheric_warming`
+- `calculate_pfc_effect`: Sera etkisi ve ısınma gradyanı hesabı.
+- `optimize_warming_yield`: ISRU üretimini "Genesis" moduna yönlendirir.
 
-### 2. Sürü Füzyonu (Swarm Fusion)
-Çoklu koloni sürüleri, tek bir "Mega-Proje" (Solar Shield veya Global Relay) için birleşir. v6.0, sürü birleşimi sırasındaki koordinasyon maliyetlerini ve verimlilik artışını optimize eder.
-
-### 3. Kuantum Devlet Modeli (Quantum AI Governor)
-Sistem, habitat kaynaklarını (Enerji, Oksijen, Besin) aşırı doğa olayları sırasında mikro-saniye hassasiyetinde optimize etmek için **Simulated Quantum Annealing** benzeri bir algoritma kullanır.
+### `swarm_construction.construction_hubs`
+- `sync_swarm`: Gezegensel ölçekli inşa projelerinde düşük gecikmeli koordinasyon.
+- `recharge_rover`: Mega-hub güç ünitelerinden enerji transferi.
 
 ---
 
-## ?? Mühendislik Handbook & API Referansı
+## ?? Proje Final Notu
+Bu proje, **TUA Astrohackathon** ve **Milli Uzay Programı** vizyonu çerçevesinde, Türkiye'nin Mars kolonizasyonundaki bilimsel ve teknolojik liderliğini sembolize etmek için tasarlanmıştır.
 
-### `Depot & Aerospace`
-| Servis | Fonksiyon | Teknik Detay |
-| :--- | :--- | :--- |
-| `isru_simulator.orbital_depot` | `calculate_orbital_refueling` | Transfer verimliliği ve boil-off hesabı. |
-| `swarm_construction.swarm_fusion` | `engage_fusion_mode` | Mega-proje koordinasyon protokolü. |
-
-### `Intelligence & Governance`
-| Servis | Fonksiyon | Teknik Detay |
-| :--- | :--- | :--- |
-| `eclss_energy_manager.quantum_governor` | `optimize_allocation` | Kuantum (Simulated) kaynak dağıtımı. |
-| `health_ai` | `diagnose` | Trend-tabanlı mürettebat sağlık tahmini. |
-
----
-
-## ?? Nihai Yol Haritası (Beyond v6.0)
-- **v7.0 - v9.0:** Asteroid madenciliği entegrasyonu ve otonom derin uzay gemisi inşası.
-- **v10.0:** Mars'ın tam terraformasyonu ve yeni bir biyosferin ilanı.
-
----
-
-## ?? Proje Künyesi
-**RedPlanet Global Sovereignty Command**
-© 2026 Planetary Systems Engineering.
-Milli Uzay Programı Vizyonuyla, Yıldızlara Kadar.
+**Gelecek Gökte Değil, Mars'taki Otonom Sistemlerimizdedir.**
+© 2026 RedPlanet Terraforming Commands. 
+Güneş Sistemi'nin İlk Otonom Hükümeti Protokolü Uygulandı.
