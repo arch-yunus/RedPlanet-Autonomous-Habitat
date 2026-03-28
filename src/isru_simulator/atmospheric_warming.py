@@ -1,4 +1,5 @@
 import math
+import random
 
 def calculate_pfc_effect(mass_pfc_kg):
     """

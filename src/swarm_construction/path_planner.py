@@ -40,7 +40,7 @@ class SwarmRover:
             elif self.role == RoverRole.EXCAVATOR:
                 self.cargo = self.stats['capacity']
                 # Hand off logic simplified: go back and forth
-                self.target = self.target_area[:2] # Head to construction
+                self.target = np.array(self.target_area[:2]) # Head to construction
             elif self.role == RoverRole.TRANSPORTER:
                 # Move between excavator and constructor
                 pass
