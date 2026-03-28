@@ -4,8 +4,9 @@ from electrolysis import calculate_electrolysis
 from liquefaction import calculate_liquefaction
 from compressor import calculate_compression_work
 from heat_exchanger import calculate_heat_recovery
+from metallurgy import extract_metals_from_regolith
 
-def calculate_full_isru_cycle(co2_mass_kg, water_mass_kg):
+def calculate_full_isru_cycle(co2_mass_kg, water_mass_kg, regolith_mass_kg=0, energy_limit=5000):
     """
     1. Electrolysis: 2H2O -> 2H2 + O2
     2. Sabatier: CO2 + 4H2 -> CH4 + 2H2O
@@ -37,7 +38,8 @@ def calculate_full_isru_cycle(co2_mass_kg, water_mass_kg):
     energy_methane = calculate_liquefaction("CH4", ch4_kg)
     energy_oxygen = calculate_liquefaction("O2", o2_to_liquefy_kg)
     
-    total_energy_kwh = (
+    # --- Phase 5: Metallurgy (v4.0) ---
+    energy_used_so_far = (
         electrolysis_res['energy_consumed_kwh'] + 
         energy_comp +
         energy_methane + 
@@ -45,17 +47,25 @@ def calculate_full_isru_cycle(co2_mass_kg, water_mass_kg):
         energy_saved_heat
     )
     
+    remaining_energy = max(0, energy_limit - energy_used_so_far)
+    metal_res = extract_metals_from_regolith(regolith_mass_kg, remaining_energy)
+    
+    total_energy_kwh = energy_used_so_far + metal_res['energy_consumed_kwh']
+    
     return {
         "methane_produced_kg": round(ch4_kg, 3),
         "water_recovered_kg": round(h2o_recovered_kg, 3),
         "oxygen_stored_kg": round(o2_to_liquefy_kg, 3),
+        "iron_kg": metal_res['iron_kg'],
+        "aluminum_kg": metal_res['aluminum_kg'],
         "total_energy_kwh": round(total_energy_kwh, 2),
         "electrolysis": electrolysis_res,
         "energy_breakdown": {
             "electrolysis": electrolysis_res['energy_consumed_kwh'],
             "compression": energy_comp,
             "liquefaction": energy_methane + energy_oxygen,
-            "recovered_heat": energy_saved_heat
+            "recovered_heat": -energy_saved_heat,
+            "metallurgy": metal_res['energy_consumed_kwh']
         }
     }
 
@@ -63,10 +73,11 @@ def main():
     parser = argparse.ArgumentParser(description="Mars ISRU Full Lifecycle Simulator")
     parser.add_argument("--co2", type=float, required=True, help="Intake CO2 mass in kg")
     parser.add_argument("--water", type=float, required=True, help="Intake Water mass in kg")
+    parser.add_argument("--regolith", type=float, default=0, help="Intake Regolith mass in kg for Metallurgy")
     
     args = parser.parse_args()
     
-    results = calculate_full_isru_cycle(args.co2, args.water)
+    results = calculate_full_isru_cycle(args.co2, args.water, regolith_mass_kg=args.regolith)
     
     print("-" * 50)
     print("?? RedPlanet ISRU: Full Chemical Cycle Results")
@@ -78,11 +89,11 @@ def main():
     print(f"?? Methane (CH4) Output: {results['methane_produced_kg']} kg")
     print(f"?? Recovered Water:      {results['water_recovered_kg']} kg")
     print("-" * 25)
+    print(f"?? Iron (Fe) Produced:   {results['iron_kg']} kg")
+    print(f"?? Aluminum (Al) Produced: {results['aluminum_kg']} kg")
+    print("-" * 25)
     print(f"?? Total Energy Consumed: {results['total_energy_kwh']} kWh")
     print("-" * 50)
-
-if __name__ == "__main__":
-    main()
 
 if __name__ == "__main__":
     main()
