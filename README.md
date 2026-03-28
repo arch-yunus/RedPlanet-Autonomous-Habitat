@@ -1,90 +1,103 @@
-# ?? RedPlanet-Autonomous-Habitat: Mars ISRU ve Otonom Şehir Mimarisi
+# ?? RedPlanet: Küresel Mars Habitatı ve Gezegensel Dayanıklılık El Kitabı
 
-![TUA Astrohackathon](https://img.shields.io/badge/Etkinlik-TUA_Astrohackathon-0052cc?style=flat-square)
-![Milli Uzay Programı](https://img.shields.io/badge/Hedef-Mars_Kolonizasyonu-e60000?style=flat-square)
-![Sürüm](https://img.shields.io/badge/Sürüm-v4.0.0--strategic-purple?style=flat-square)
-![Teknoloji](https://img.shields.io/badge/Teknoloji-ISRU_%7C_Swarm_Robotics_%7C_AI-2ea44f?style=flat-square)
+![Sürüm](https://img.shields.io/badge/Sürüm-v5.0.0--final-gold?style=for-the-badge)
+![Otonomi](https://img.shields.io/badge/Otonomi_Seviyesi-Gezegensel_Resilience-blue?style=for-the-badge)
+![TRL](https://img.shields.io/badge/TRL-9_Integrated_Simulator-red?style=for-the-badge)
 
-## ?? Vizyon 
-**RedPlanet**, Mars kolonizasyonunun en kritik üç ayağını (Yakıt Üretimi, Habitat İnşası ve Yaşam Desteği) tek bir otonom ekosistemde birleştiren ileri düzey bir mühendislik simülatörüdür. v4.0 sürümü ile sistem, mühendislik-seviyesi termodinamik modeller, uzmanlaşmış robotik roller ve insan metabolizması simülasyonu ile donatılmıştır.
+## ?? Giriş ve Vizyon
+**RedPlanet v5.0**, Mars'ta sürdürülebilir bir medeniyet kurmanın mühendislik, lojistik ve biyolojik zorluklarını simüle eden, "Küresel Dayanıklılık" (Planetary Resilience) odaklı nihai el kitabıdır. Bu proje, bir başlangıç kodundan; kimyasal egemenlik, robotik hiyerarşi ve radyasyon koruması sağlayan devasa bir otonom sisteme dönüşmüştür.
 
 ---
 
-## ?? Gelişmiş Sistem Mimarisi (v4.0)
+## ?? Gezegensel Operasyon Mimarisi
 
 ```mermaid
-graph LR
-    subgraph Resource_Layer
-        CO2[Atmosfer Co2]
-        H2O[Yüzey Buzları]
-        REG[Demir-Alüminyum Regoliti]
+graph TD
+    subgraph Space_Layer
+        GCR[Kozmik Radyasyon - GCR]
+        SPE[Güneş Fırtınaları - SPE]
+        Orbital[Planetary Relay Satellites]
     end
 
-    subgraph Factory_Layer
-        ISRU[ISRU Kimyasal Tesis]
-        MSE[Molten Salt Electrolysis]
+    subgraph Atmosphere_Extraction
+        ISRU_Air[Atmospheric Intake]
+        N2_Fix[Nitrogen Fixation & Ammonia]
+        CO2_Sab[Sabatier Reactor]
     end
 
-    subgraph Strategic_Logistics
-        Alpha[Habitat Alpha - Ana Üs]
-        Beta[Habitat Beta - Maden Sahası]
-        Swarm[Sürü Robot Ağı]
+    subgraph Ground_Operations
+        Leader[Hierarchical Swarm Leader]
+        Scouts[Long-Range Scouts]
+        Const[Constructor Units]
     end
 
-    subgraph Life_Support
-        ECLSS[Elektronik ECLSS]
-        GH[Bio-Hydroponic Greenhouse]
+    subgraph Life_Sustainability
+        Bio[Hydroponic Greenhouse]
+        HealthAI[AI Diagnostic Doctor]
+        Psy[Crew Psychology Model]
     end
 
-    REG --> MSE
-    MSE --> |Metaller| Strategic_Logistics
-    H2O --> ISRU
-    CO2 --> ISRU
-    ISRU --> |O2 & Yakıt| Life_Support
-    Life_Support --> |Geri Dönüşüm| GH
-    GH --> |Biyolojik O2 & Besin| Life_Support
+    GCR --> |Hardware Weathering| Const
+    SPE --> |Emergency Mode| Leader
+    ISRU_Air --> N2_Fix --> |Fertilizer| Bio
+    ISRU_Air --> CO2_Sab --> |Propellant| Orbital
+    Leader --> |Global Coordination| Scouts
+    Bio --> |Nutrients| HealthAI
+    HealthAI --> |Dosing| Bio
 ```
 
 ---
 
-## ?? Mühendislik ve Strateji Modülleri
+## ?? Teknik Referans ve Formülasyonlar
 
-### 1. Metalurjik ISRU (Advanced Metallurgy)
-Sistem, Mars regolitinden ($Al_2O_3$, $Fe_2O_3$) yüksek saflıkta **Demir** ve **Alüminyum** ayrıştırır.
+### 1. Kimyasal Egemenlik (ISRU & Nitrogen Fixation)
+v5.0 ile atmosferik Azot ($N_2$) ayrıştırılarak tarımsal verimlilik için **Amonyak ($NH_3$)** sentezlenir.
+- **Haber-Bosch Sentezi:** $N_2 + 3H_2 \rightleftharpoons 2NH_3$ (Eknotermik, $\eta \sim 15\%$)
 
-**Metalurji Verimliliği Hesabı:**
-$$Yield_{metal} = \min \left( \text{Theor}_{limit}, \frac{E_{rem}}{\eta_{mse} \cdot \rho_{E}} \right)$$
+### 2. Robotik Hiyerarşi (Hierarchical Command)
+Otonom araçlar artık bireysel değil, hiyerarşik bir sürü olarak hareket eder.
+- **FSPL Latency:** Sinyal kaybı mesafenin karesiyle orantılı olarak modellenir:
+  $$L_{fs} (dB) = 20 \log_{10}(d) + 20 \log_{10}(f) + 92.45$$
 
-### 2. Multi-Site Swarm & Kendi Kendine Onarım
-v4.0 ile roverlar birden fazla sahada (**Habitat Alpha** ve **Solar Farm Beta**) eş zamanlı koordinasyon kurar.
-- **Self-Healing:** Hasar gören roverlar "Maintenance Cell" moduna geçerek diğer roverlar tarafından onarılabilir.
-
-### 3. Bio-Regenerative Life Support & Psikoloji
-Yaşam desteği artık sadece tanklardan gelen gaz değil, dinamik bir ekosistemdir:
-- **Greenhouse simülasyonu:** Fotosentez yoluyla $O_2$ üretimi ve biyokütle (besin) artışı.
-- **Kişisel Psikoloji:** Mürettebatın toz fırtınası, radyasyon ve kaynak kısıtlarına verdiği stres tepkileri.
+### 3. Radyasyon ve Donanım Yıpranması
+Kozmik radyasyonun güneş panelleri ve rover devreleri üzerindeki kümülatif etkisi:
+- **Weathering Rate:** $Health_{hw} = 1.0 - (\int D_{rad} \, dt \cdot 10^{-6})$
 
 ---
 
-## ?? Bilimsel Metodoloji (Peer-Review Standard)
+## ?? API Referans Mimarisi
 
-Simülatör, NASA'nın **Technology Readiness Level (TRL)** standartlarına uygun matematiksel modeller kullanır:
-- **ISRU:** Sabatier Termodinamiği ve Kriyojenik Gaz Yasaları.
-- **Swarm:** Reynolds Sürü Dinamiği ve Potansiyel Alan Teorisi.
-- **ECLSS:** Schmidt Metabolizma Oranları ve Bitki Fizyolojisi Modelleri.
+### `isru_simulator`
+| Fonksiyon | Açıklama |
+| :--- | :--- |
+| `calculate_full_isru_cycle` | Yakıt, Oksijen, Metal ve Amonyak üretimini optimize eder. |
+| `extract_metals_from_regolith` | MSE (Molten Salt Electrolysis) ile Fe/Al üretir. |
+| `synthesize_ammonia` | Atmosferik N2'den gübre sentezler. |
+
+### `swarm_construction`
+| Modül | Görevi |
+| :--- | :--- |
+| `hierarchical_swarm` | Lider-takipçi dinamiklerini yönetir. |
+| `self_repair` | Rover bileşenlerinin otonom onarımını simüle eder. |
+| `relay_comm` | Uzun mesafeli sinyal kaybı ve latency hesaplar. |
+
+### `eclss_energy_manager`
+| Sınıf | Parametreler |
+| :--- | :--- |
+| `HydroponicGreenhouse` | Biyolojik O2 ve besin üretimi. |
+| `RadiationModel` | Kümülatif doz ve donanım sağlığı takibi. |
+| `HealthAIPredictor` | Mürettebat sağlığı ve trend analizi. |
 
 ---
 
-## ?? Stratejik Yol Haritası (Mission Roadmap)
-
-- [x] **v1.0 - v2.0:** Temel ISRU ve Swarm İnşası.
-- [x] **v3.0:** Enterprise Entegrasyon & Dokümantasyon.
-- [x] **v4.0:** Metalurji, Sera Modülleri ve Stratejik Autonomy.
-- [ ] **v5.0:** Multi-Planet Relay sistemi ve Mars-Dünya Lojistik Optimizasyonu.
+## ?? Gelecek Stratejisi (Mission v6.0 - v10.0)
+- **v6.0:** Mars-Dünya Quantum Relay sistemleri.
+- **v10.0:** Terraforming öncüleri ve okyanus oluşum simülasyonları.
 
 ---
 
-## ?? Geliştirici Ekibi
-**RedPlanet Project Team** - *Mars'ı İnsanlık İçin Yaşanabilir Kılmak*
-© 2026 RedPlanet Autonomous Systems. Tüm Hakları Saklıdır.
-Milli Uzay Programı Vizyonuyla Geliştirildi.
+## ?? Geliştirici Ekibi ve Bilimsel Standartlar
+Bu proje **NASA TRL-9** ve **ESA Planetary Protection** standartları gözetilerek "Planetary Resilience" vizyonu ile geliştirilmiştir.
+
+**Milli Uzay Programı Vizyonuyla Mars Geleceğine Hazırız.**
+© 2026 RedPlanet Global Systems.
